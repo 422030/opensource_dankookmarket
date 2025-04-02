@@ -1,29 +1,18 @@
-// 단근마켓 기능 연결 스크립트
+document.getElementById('addBookBtn').addEventListener('click', function() {
+    window.location.href = 'add_book.html'; // 교재 등록 페이지로 이동
+});
 
-// 교재 등록 버튼 → add_book.html 이동
-const addBookBtn = document.getElementById('addBookBtn');
-if (addBookBtn) {
-    addBookBtn.addEventListener('click', () => {
-        window.location.href = 'add_book.html';
-    });
-}
+document.getElementById('groupBuyBtn').addEventListener('click', function() {
+    window.location.href = 'group_buy.html'; // 공동구매 등록 페이지로 이동
+});
 
-// 공동구매 등록 버튼 → group_buy.html 이동
-const groupBuyBtn = document.getElementById('groupBuyBtn');
-if (groupBuyBtn) {
-    groupBuyBtn.addEventListener('click', () => {
-        window.location.href = 'group_buy.html';
-    });
-}
+// 검색 필터 (단순화된 예시)
+document.querySelector('.search-filter button').addEventListener('click', function() {
+    const searchValue = document.getElementById('searchBar').value;
+    const categoryValue = document.getElementById('categoryFilter').value;
 
-// 검색 필터 버튼 클릭
-const searchButton = document.querySelector('.search-filter button');
-if (searchButton) {
-    searchButton.addEventListener('click', () => {
-        const searchValue = document.getElementById('searchBar').value.trim();
-        const categoryValue = document.getElementById('categoryFilter').value;
-
-        console.log('검색어:', searchValue || '없음');
-        console.log('선택한 카테고리:', categoryValue || '전체');
-    });
-}
+    console.log('검색어:', searchValue);
+    console.log('카테고리:', categoryValue);
+    
+    // 여기에 검색 결과 필터링 로직을 추가할 수 있습니다
+});
