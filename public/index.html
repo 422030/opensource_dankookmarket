@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단근마켓</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
+  <style>
+    .main-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+
+    .main-title img {
+      width: 130px;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+
+    .main-title h1 {
+      font-size: 32px;
+      color: #3661e1;
+      margin: 0;
+    }
+
+    header nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    header nav a img {
+      height: 50px;
+      vertical-align: middle;
+    }
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    header nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    header nav ul li a:hover {
+      text-decoration: underline;
+    }
+
+    .header-buttons {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .header-buttons button {
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .user-info {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+      header nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      header nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="logo.png" alt="단근마켓 로고" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="main-title">
+      <img src="logo.png" alt="단근마켓 로고" />
+      <h1>단근마켓</h1>
+    </div>
+
+    <div class="header-buttons">
+      <button onclick="window.location.href='search_book.html'">교재 검색</button>
+      <button onclick="window.location.href='add_book.html'">교재 등록</button>
+      <button onclick="window.location.href='group_buy.html'">공동구매</button>
+    </div>
+
+    <div class="user-info" id="userInfo">
+      <p>사용자 이름을 입력해 주세요.</p>
+      <input type="text" id="usernameInput" placeholder="이름 또는 닉네임">
+      <br><br>
+      <button onclick="login()">로그인</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    function login() {
+      const username = document.getElementById('usernameInput').value.trim();
+      if (username.length < 1) {
+        alert("이름을 입력해 주세요.");
+        return;
+      }
+      localStorage.setItem('username', username);
+      location.reload();
+    }
+
+    const username = localStorage.getItem('username');
+    if (username) {
+      const userInfoDiv = document.getElementById('userInfo');
+      userInfoDiv.innerHTML = `
+        <p><strong>${username}님, 환영합니다!</strong></p>
+        <button onclick="logout()">로그아웃</button>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem('username');
+      location.reload();
+    }
+  </script>
+</body>
+</html>

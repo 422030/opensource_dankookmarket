@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단근마켓 로그인</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main style="text-align: center; margin-top: 100px;">
+    <h1>단근마켓</h1>
+    <p>사용자 이름을 입력해 주세요.</p>
+    <input type="text" id="usernameInput" placeholder="이름 또는 닉네임">
+    <br><br>
+    <button onclick="login()">로그인</button>
+  </main>
+
+  <script>
+    function login() {
+      const username = document.getElementById('usernameInput').value.trim();
+      if (username.length < 1) {
+        alert("이름을 입력해 주세요.");
+        return;
+      }
+      localStorage.setItem('username', username);  // 사용자 이름 저장
+      window.location.href = 'index.html';         // 메인 페이지로 이동
+    }
+  </script>
+</body>
+</html>

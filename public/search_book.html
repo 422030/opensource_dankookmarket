@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>교재 검색</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    #userInfo {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #userInfo button {
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #3661e1; color: white;">
+      <div style="display: flex; align-items: center;">
+        <a href="index.html">
+          <img src="logo.png" alt="단근마켓 로고" style="height: 50px;">
+        </a>
+        <ul style="list-style: none; display: flex; gap: 15px; margin-left: 20px;">
+          <li><a href="index.html" style="color:white; text-decoration:none;">홈</a></li>
+          <li><a href="search_book.html" style="color:white; text-decoration:none;">교재 검색</a></li>
+          <li><a href="add_book.html" style="color:white; text-decoration:none;">교재 등록</a></li>
+          <li><a href="group_buy.html" style="color:white; text-decoration:none;">공동구매</a></li>
+        </ul>
+      </div>
+      <div id="userInfo"></div>
+    </nav>
+  </header>
+
+  <main>
+    <h2>교재 검색</h2>
+    <div class="search-filter">
+      <input type="text" id="searchInput" placeholder="교재명을 입력하세요">
+      <select id="categoryFilter">
+        <option value="all">전체</option>
+        <option value="전공">전공</option>
+        <option value="교양">교양</option>
+      </select>
+      <button onclick="searchBooks()">검색</button>
+    </div>
+
+    <div id="resultArea"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const username = localStorage.getItem('username');
+    const userInfoDiv = document.getElementById('userInfo');
+    if (!username) {
+      alert("로그인 먼저 해주세요.");
+      window.location.href = 'index.html';
+    } else {
+      userInfoDiv.innerHTML = `${username}님 <button onclick="logout()">[로그아웃]</button>`;
+    }
+
+    function logout() {
+      localStorage.removeItem('username');
+      window.location.href = 'index.html';
+    }
+
+    const books = [
+      { id: 1, title: "화학공학 개론", category: "전공", price: "15,000원" },
+      { id: 2, title: "경제학 입문", category: "교양", price: "10,000원" },
+      { id: 3, title: "프로그래밍 첫걸음", category: "전공", price: "18,000원" }
+    ];
+
+    function searchBooks() {
+      const keyword = document.getElementById('searchInput').value.trim();
+      const category = document.getElementById('categoryFilter').value;
+      const resultArea = document.getElementById('resultArea');
+      resultArea.innerHTML = "";
+
+      if (keyword.length < 1) {
+        alert("교재명을 입력해 주세요.");
+        return;
+      }
+
+      const results = books.filter(book =>
+        (category === "all" || book.category === category) &&
+        book.title.includes(keyword)
+      );
+
+      if (results.length > 0) {
+        results.forEach((book, index) => {
+          const div = document.createElement("div");
+          div.innerHTML = `${index + 1}. <strong>${book.title}</strong> - ${book.category} - ${book.price}<hr>`;
+          resultArea.appendChild(div);
+        });
+      } else {
+        resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
