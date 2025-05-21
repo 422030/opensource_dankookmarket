@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>교재 등록</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <style>
+    /* 네비게이션 스타일 */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin-left: 20px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+    }
     #userInfo {
       margin-left: auto;
       display: flex;
@@ -20,16 +39,16 @@
 </head>
 <body>
   <header>
-    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #3661e1; color: white;">
+    <nav>
       <div style="display: flex; align-items: center;">
         <a href="index.html">
-          <img src="logo.png" alt="단근마켓 로고" style="height: 50px;">
+          <img src="logo.png" alt="단근마켓 로고" style="height: 50px;" />
         </a>
-        <ul style="list-style: none; display: flex; gap: 15px; margin-left: 20px;">
-          <li><a href="index.html" style="color:white; text-decoration:none;">홈</a></li>
-          <li><a href="search_book.html" style="color:white; text-decoration:none;">교재 검색</a></li>
-          <li><a href="add_book.html" style="color:white; text-decoration:none;">교재 등록</a></li>
-          <li><a href="group_buy.html" style="color:white; text-decoration:none;">공동구매</a></li>
+        <ul>
+          <li><a href="index.html">홈</a></li>
+          <li><a href="search_book.html">교재 검색</a></li>
+          <li><a href="add_book.html">교재 등록</a></li>
+          <li><a href="group_buy.html">공동구매</a></li>
         </ul>
       </div>
       <div id="userInfo"></div>
@@ -38,16 +57,20 @@
 
   <main>
     <h2>교재 등록 페이지</h2>
-    <form id="addBookForm">
-      <label for="bookTitle">교재 제목:</label>
-      <input type="text" id="bookTitle" required>
-      <label for="bookPrice">가격:</label>
-      <input type="number" id="bookPrice" required>
+    <form onsubmit="registerBook(event)">
+      <input type="text" id="bookTitle" placeholder="교재 제목" required />
+      <input type="number" id="bookPrice" placeholder="가격" required min="1" />
+
+      <select id="bookCategory" required>
+        <option value="">카테고리 선택</option>
+        <option value="전공">전공</option>
+        <option value="교양">교양</option>
+      </select>
+
+      <textarea id="bookComment" placeholder="코멘트 (100자 이내)" maxlength="100"></textarea>
+
       <button type="submit">등록</button>
     </form>
-
-    <h3>등록된 교재 목록</h3>
-    <div id="bookList"></div>
   </main>
 
   <footer>
@@ -55,25 +78,30 @@
   </footer>
 
   <script>
-    const username = localStorage.getItem('username');
-    const userInfoDiv = document.getElementById('userInfo');
+    // 로그인 체크
+    const username = localStorage.getItem("username");
+    const userInfoDiv = document.getElementById("userInfo");
     if (!username) {
-      alert("로그인 먼저 해주세요.");
-      window.location.href = 'index.html';
+      alert("로그인이 필요합니다.");
+      window.location.href = "index.html";
     } else {
       userInfoDiv.innerHTML = `${username}님 <button onclick="logout()">[로그아웃]</button>`;
     }
 
     function logout() {
-      localStorage.removeItem('username');
-      window.location.href = 'index.html';
+      localStorage.removeItem("username");
+      window.location.href = "index.html";
     }
 
-    const bookList = [];
-    document.getElementById('addBookForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const title = document.getElementById('bookTitle').value.trim();
-      const price = parseInt(document.getElementById('bookPrice').value.trim(), 10);
+    // 교재 등록
+    function registerBook(event) {
+      event.preventDefault();
+
+      const title = document.getElementById("bookTitle").value.trim();
+      const price = parseInt(document.getElementById("bookPrice").value);
+      const category = document.getElementById("bookCategory").value;
+      const comment = document.getElementById("bookComment").value.trim();
+      const writer = username;
 
       if (title.length < 2) {
         alert("교재 제목은 2글자 이상 입력해 주세요.");
@@ -83,25 +111,26 @@
         alert("가격은 0보다 큰 숫자로 입력해 주세요.");
         return;
       }
-      if (bookList.some(book => book.title === title)) {
+
+      const books = JSON.parse(localStorage.getItem("books") || "[]");
+
+      if (books.some(book => book.title === title)) {
         alert("이미 등록된 교재입니다.");
         return;
       }
 
-      const newBook = { title, price };
-      bookList.push(newBook);
-      renderBookList();
-      alert("등록이 완료되었습니다!");
-      document.getElementById('addBookForm').reset();
-    });
+      books.push({
+        title,
+        price,
+        category,
+        comment,
+        writer,
+        createdAt: new Date().toISOString()
+      });
 
-    function renderBookList() {
-      const container = document.getElementById('bookList');
-      container.innerHTML = bookList.map((book, index) =>
-        `<div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-          ${index + 1}. <strong>${book.title}</strong> - ${book.price}원
-        </div>`
-      ).join('');
+      localStorage.setItem("books", JSON.stringify(books));
+      alert("교재가 등록되었습니다!");
+      window.location.href = "index.html";
     }
   </script>
 </body>
