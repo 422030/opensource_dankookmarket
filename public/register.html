@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 - 단근마켓</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <main style="text-align: center; margin-top: 100px;">
+    <h1>회원가입</h1>
+    <p>사용자 정보를 입력해 주세요.</p>
+    <input type="text" id="regUsername" placeholder="이름 또는 닉네임"><br><br>
+    <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)"><br><br>
+    <label>
+      <input type="checkbox" id="isAdminCheck"> 관리자 계정으로 등록
+    </label><br><br>
+    <button onclick="register()">회원가입</button>
+    <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
+  </main>
+
+  <script>
+    function register() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const isAdmin = document.getElementById('isAdminCheck').checked;
+
+      if (!username || !password) {
+        alert("모든 항목을 입력해 주세요.");
+        return;
+      }
+
+      const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=\-{}[\]|:;"'<>,.?/~`]).{8,}$/;
+      if (!pwRegex.test(password)) {
+        alert("비밀번호는 8자 이상, 영문+숫자+기호를 포함해야 합니다.");
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+      if (users[username]) {
+        alert("이미 등록된 사용자입니다.");
+        return;
+      }
+
+      users[username] = {
+        password,
+        isAdmin
+      };
+
+      localStorage.setItem('users', JSON.stringify(users));
+      alert("회원가입이 완료되었습니다.");
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>
