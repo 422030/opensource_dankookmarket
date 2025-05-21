@@ -1,18 +1,19 @@
-document.getElementById('addBookBtn').addEventListener('click', function() {
-    window.location.href = 'add_book.html'; // 교재 등록 페이지로 이동
-});
+// script.js
 
-document.getElementById('groupBuyBtn').addEventListener('click', function() {
-    window.location.href = 'group_buy.html'; // 공동구매 등록 페이지로 이동
-});
+function isLoggedIn() {
+  return !!localStorage.getItem('username');
+}
 
-// 검색 필터 (단순화된 예시)
-document.querySelector('.search-filter button').addEventListener('click', function() {
-    const searchValue = document.getElementById('searchBar').value;
-    const categoryValue = document.getElementById('categoryFilter').value;
+function getUser() {
+  return localStorage.getItem('username');
+}
 
-    console.log('검색어:', searchValue);
-    console.log('카테고리:', categoryValue);
-    
-    // 여기에 검색 결과 필터링 로직을 추가할 수 있습니다
-});
+function isAdmin() {
+  return localStorage.getItem('isAdmin') === 'true';
+}
+
+function logout() {
+  localStorage.removeItem('username');
+  localStorage.removeItem('isAdmin');
+  window.location.href = 'index.html';
+}

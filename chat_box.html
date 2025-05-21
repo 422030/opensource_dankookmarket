@@ -2,8 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>단근마켓</title>
+  <title>채팅함</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     .chat-icon {
@@ -29,22 +28,16 @@
       transform: rotate(45deg);
       box-shadow: -2px 2px 0 #3661e1;
     }
+
     .chat-label {
       font-size: 12px;
-      color: white; /* ✅ 흰색으로 수정 */
+      color: white; /* ✅ 흰색으로 변경 */
       text-align: center;
       margin-top: 4px;
     }
-    .header-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .header-buttons button {
-      padding: 8px 14px;
-      font-size: 14px;
-      cursor: pointer;
+
+    .section {
+      margin-bottom: 30px;
     }
   </style>
 </head>
@@ -52,7 +45,7 @@
 
   <header>
     <nav>
-      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;"></a>
+      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;" /></a>
       <ul>
         <li><a href="index.html">홈</a></li>
         <li><a href="search_book.html">교재 검색</a></li>
@@ -68,24 +61,14 @@
     </nav>
   </header>
 
-  <div style="text-align: right; padding: 0 20px;">
-    <button onclick="logout()">로그아웃</button>
-  </div>
-
   <main style="padding: 20px;">
-    <div class="main-title" style="text-align: center;">
-      <img src="logo.png" alt="단근마켓 로고" style="width: 130px; height: 100px;" />
-      <h1 style="color: #3661e1;">단근마켓</h1>
-    </div>
-
-    <div class="header-buttons">
-      <button onclick="location.href='search_book.html'">교재 검색</button>
-      <button onclick="location.href='add_book.html'">교재 등록</button>
-      <button onclick="location.href='group_buy.html'">공동구매</button>
-    </div>
-
     <h2>📚 내가 등록한 교재</h2>
-    <div id="myBooks"></div>
+    <div id="myBooks" class="section"></div>
+
+    <hr/>
+
+    <h2>💬 채팅함</h2>
+    <div id="chatList" class="section"></div>
   </main>
 
   <footer>
@@ -95,6 +78,7 @@
   <script>
     const username = localStorage.getItem("username");
     const myBooksEl = document.getElementById("myBooks");
+    const chatListEl = document.getElementById("chatList");
 
     const books = JSON.parse(localStorage.getItem("books") || "[]");
     const myBooks = books.filter(book => book.writer === username);
@@ -118,11 +102,24 @@
       location.reload();
     }
 
-    function logout() {
-      localStorage.removeItem('username');
-      localStorage.removeItem('isAdmin');
-      alert("로그아웃 되었습니다.");
-      window.location.href = 'login.html';
+    const chatUsers = new Set();
+    for (let key in localStorage) {
+      if (key.startsWith("chat_")) {
+        const [, from, , to] = key.split("_");
+        if (from === username) chatUsers.add(to);
+        if (to === username) chatUsers.add(from);
+      }
+    }
+
+    if (chatUsers.size === 0) {
+      chatListEl.innerHTML = "<p>아직 채팅한 사용자가 없습니다.</p>";
+    } else {
+      chatListEl.innerHTML = Array.from(chatUsers).map(user => `
+        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+          👤 <strong>${user}</strong><br/>
+          <a href="chat_room.html?with=${user}">채팅방으로 이동</a>
+        </div>
+      `).join("");
     }
   </script>
 
