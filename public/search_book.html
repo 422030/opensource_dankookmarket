@@ -1,52 +1,73 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>교재 검색</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    #userInfo {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .chat-icon {
+      width: 30px;
+      height: 24px;
+      background-color: white;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 0 0 2px #3661e1;
     }
-    #userInfo button {
-      padding: 4px 8px;
-      cursor: pointer;
+
+    .chat-icon::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border: 6px solid transparent;
+      border-top-color: white;
+      border-bottom: 0;
+      margin-left: -3px;
+      transform: rotate(45deg);
+      box-shadow: -2px 2px 0 #3661e1;
+    }
+
+    img {
+      max-width: 100px;
+      margin-top: 5px;
+      display: block;
     }
   </style>
 </head>
 <body>
   <header>
-    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #3661e1; color: white;">
-      <div style="display: flex; align-items: center;">
-        <a href="index.html">
-          <img src="logo.png" alt="단근마켓 로고" style="height: 50px;">
-        </a>
-        <ul style="list-style: none; display: flex; gap: 15px; margin-left: 20px;">
-          <li><a href="index.html" style="color:white; text-decoration:none;">홈</a></li>
-          <li><a href="search_book.html" style="color:white; text-decoration:none;">교재 검색</a></li>
-          <li><a href="add_book.html" style="color:white; text-decoration:none;">교재 등록</a></li>
-          <li><a href="group_buy.html" style="color:white; text-decoration:none;">공동구매</a></li>
-        </ul>
-      </div>
-      <div id="userInfo"></div>
+    <nav>
+      <a href="index.html"><img src="logo.png" alt="로고" /></a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <!-- ✅ 채팅함 말풍선 아이콘 -->
+        <li>
+          <a href="chat_box.html" title="채팅함">
+            <div class="chat-icon"></div>
+          </a>
+        </li>
+      </ul>
     </nav>
   </header>
 
   <main>
     <h2>교재 검색</h2>
-    <div class="search-filter">
-      <input type="text" id="searchInput" placeholder="교재명을 입력하세요">
-      <select id="categoryFilter">
-        <option value="all">전체</option>
-        <option value="전공">전공</option>
-        <option value="교양">교양</option>
-      </select>
-      <button onclick="searchBooks()">검색</button>
-    </div>
+    <input id="searchInput" placeholder="교재명을 입력하세요" />
+    <select id="categoryFilter">
+      <option value="all">전체</option>
+      <option value="전공">전공</option>
+      <option value="교양">교양</option>
+    </select>
+    <button onclick="searchBooks()">검색</button>
+    <h2>책 목록</h2>
+    <ul id="book-list"></ul> <!-- 여기에 책 목록이 표시됨 -->
+
+    <script src="../src/js/script.js"></script>
 
     <div id="resultArea"></div>
   </main>
@@ -56,52 +77,65 @@
   </footer>
 
   <script>
-    const username = localStorage.getItem('username');
-    const userInfoDiv = document.getElementById('userInfo');
+    const username = localStorage.getItem("username");
     if (!username) {
       alert("로그인 먼저 해주세요.");
-      window.location.href = 'index.html';
-    } else {
-      userInfoDiv.innerHTML = `${username}님 <button onclick="logout()">[로그아웃]</button>`;
+      window.location.href = "index.html";
     }
 
-    function logout() {
-      localStorage.removeItem('username');
-      window.location.href = 'index.html';
-    }
+    let books = [];
 
-    const books = [
-      { id: 1, title: "화학공학 개론", category: "전공", price: "15,000원" },
-      { id: 2, title: "경제학 입문", category: "교양", price: "10,000원" },
-      { id: 3, title: "프로그래밍 첫걸음", category: "전공", price: "18,000원" }
-    ];
+    async function fetchBooksFromAPI() {
+      try{
+        const response = await fetch("http://127.0.0.1:8000/api/books/");
+        if (!response.ok) {
+          throw new Error("책 정보를 불러오는 데 실패했습니다.");
+        }
+        books = await response.json();
+        searchBooks();
+      } catch (error) {
+        console.error("API 에러:", error);
+      }
+    }
 
     function searchBooks() {
-      const keyword = document.getElementById('searchInput').value.trim();
-      const category = document.getElementById('categoryFilter').value;
-      const resultArea = document.getElementById('resultArea');
-      resultArea.innerHTML = "";
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+      const category = document.getElementById("categoryFilter").value;
+      const resultArea = document.getElementById("resultArea");
 
-      if (keyword.length < 1) {
-        alert("교재명을 입력해 주세요.");
+      const results = books.filter(book =>
+        (book.title.toLowerCase().includes(keyword) || book.description?.toLowerCase().includes(keyword)) &&
+        (category === "all" || book.category === category)
+      );
+
+      if (results.length === 0) {
+        resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
         return;
       }
 
-      const results = books.filter(book =>
-        (category === "all" || book.category === category) &&
-        book.title.includes(keyword)
-      );
+      resultArea.innerHTML = results.map((book, i) => `
+        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+          ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
+          💬 ${book.comment}<br/>
+          ${book.imageUrl ? `<img src="${book.imageUrl}" />` : ""}
+          <br/>👤 등록자: ${book.writer}
+          ${book.writer !== username ? `<br/><button onclick="startChat('${book.writer}')">💬 채팅하기</button>` : ""}
+        </div>
+      `).join("");
+    }
 
-      if (results.length > 0) {
-        results.forEach((book, index) => {
-          const div = document.createElement("div");
-          div.innerHTML = `${index + 1}. <strong>${book.title}</strong> - ${book.category} - ${book.price}<hr>`;
-          resultArea.appendChild(div);
-        });
-      } else {
-        resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    function startChat(target) {
+      const message = prompt(`${target}님에게 보낼 메시지를 입력하세요:`);
+      if (message) {
+        const key = `chat_${username}_to_${target}`;
+        const history = JSON.parse(localStorage.getItem(key) || "[]");
+        history.push({ from: username, to: target, message, time: new Date().toLocaleString() });
+        localStorage.setItem(key, JSON.stringify(history));
+        alert("메시지를 보냈습니다!");
       }
     }
+
+    window.addEventListener("DOMContentLoaded", fetchBooksFromAPI);
   </script>
 </body>
 </html>
