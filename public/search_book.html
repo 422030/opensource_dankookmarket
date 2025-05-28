@@ -108,34 +108,25 @@
 
       const results = books.filter(book =>
         (book.title.toLowerCase().includes(keyword) || book.description?.toLowerCase().includes(keyword)) &&
-
-    const books = JSON.parse(localStorage.getItem("books") || "[]");
-
-    function searchBooks() {
-      const keyword = searchInput.value.trim();
-      const category = categoryFilter.value;
-      const resultArea = document.getElementById("resultArea");
-
-      const results = books.filter(book =>
-        book.title.includes(keyword) &&
         (category === "all" || book.category === category)
-      );
+  );
 
-      if (results.length === 0) {
-        resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
-        return;
-      }
+  if (results.length === 0) {
+    resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    return;
+  }
 
-      resultArea.innerHTML = results.map((book, i) => `
-        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-          ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
-          💬 ${book.comment}<br/>
-          ${book.imageUrl ? `<img src="${book.imageUrl}" />` : ""}
-          <br/>👤 등록자: ${book.writer}
-          ${book.writer !== username ? `<br/><button onclick="startChat('${book.writer}')">💬 채팅하기</button>` : ""}
-        </div>
-      `).join("");
-    }
+  resultArea.innerHTML = results.map((book, i) => `
+    <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+      ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
+      💬 ${book.comment}<br/>
+      ${book.imageUrl ? `<img src="${book.imageUrl}" />` : ""}
+      <br/>👤 등록자: ${book.writer}
+      ${book.writer !== username ? `<br/><button onclick="startChat('${book.writer}')">💬 채팅하기</button>` : ""}
+    </div>
+  `).join("");
+}
+
 
     function startChat(target) {
       const message = prompt(`${target}님에게 보낼 메시지를 입력하세요:`);
