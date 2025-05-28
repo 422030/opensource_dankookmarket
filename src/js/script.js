@@ -1,3 +1,5 @@
+// script.js
+
 // 로그인 관련 유틸
 function isLoggedIn() {
   return !!localStorage.getItem('username');
@@ -15,46 +17,6 @@ function logout() {
   localStorage.removeItem('username');
   localStorage.removeItem('isAdmin');
   window.location.href = 'index.html';
-}
-async function getCurrentUser() {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/accounts/me/", {
-      credentials: "include", // 세션 기반 인증에 필요
-    });
-    if (!response.ok) throw new Error("로그인 필요");
-    const user = await response.json();
-
-    localStorage.setItem("username", user.username);
-    return user.username;
-  } catch (err) {
-    alert("로그인이 필요합니다.");
-    window.location.href = "index.html";
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const username = await getCurrentUser();
-
-  if (window.location.pathname.includes('search_book.html')) {
-    fetchBooks();
-  }
-});
-
-function fetchBooks() {
-  fetch('http://127.0.0.1:8000/api/books/')
-    .then(response => response.json())
-    .then(data => {
-      const bookList = document.getElementById('book-list');
-      if (!bookList) return;
-
-      bookList.innerHTML = '';
-      data.forEach(book => {
-        const li = document.createElement('li');
-        li.textContent = `${book.title} - ${book.description}`;
-        bookList.appendChild(li);
-      });
-    })
-    .catch(error => console.error('책 목록 불러오기 실패:', error));
 }
 
 // 페이지 이동 버튼
