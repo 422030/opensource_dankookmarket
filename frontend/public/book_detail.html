@@ -1,0 +1,148 @@
+#교재 상세 정보 표시 페이지
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교재 상세보기 - 단근마켓</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    main {
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .book-card {
+      background-color: white;
+      border: 2px solid #3661e1;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      color: #333;
+    }
+
+    .book-card h2 {
+      color: #3661e1;
+      margin-bottom: 10px;
+    }
+
+    .book-info p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    #interestBtn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid #3661e1;
+      background-color: white;
+      color: #3661e1;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    #interestBtn:hover {
+      background-color: #3661e1;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="logo.png" alt="로고" style="height: 50px;" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="book-card">
+      <h2 id="bookTitle">교재 제목</h2>
+      <div class="book-info">
+        <p><strong>저자:</strong> <span id="bookAuthor"></span></p>
+        <p><strong>가격:</strong> <span id="bookPrice"></span> 원</p>
+        <p><strong>상태:</strong> <span id="bookCondition"></span></p>
+        <p><strong>카테고리:</strong> <span id="bookCategory"></span></p>
+        <p><strong>설명:</strong><br><span id="bookDescription"></span></p>
+      </div>
+      <button id="interestBtn">찜 여부 확인 중...</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('id');
+    const token = localStorage.getItem('token');
+
+    // 책 정보 불러오기
+    fetch(`http://127.0.0.1:8000/api/books/${bookId}/`)
+      .then(res => res.json())
+      .then(book => {
+        document.getElementById("bookTitle").textContent = book.title;
+        document.getElementById("bookAuthor").textContent = book.author;
+        document.getElementById("bookPrice").textContent = book.price;
+        document.getElementById("bookCondition").textContent = book.condition;
+        document.getElementById("bookCategory").textContent = book.category;
+        document.getElementById("bookDescription").textContent = book.description;
+      });
+
+    // 찜 여부 확인 및 버튼 업데이트
+    fetch(`http://127.0.0.1:8000/api/interests/check/?book_id=${bookId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const btn = document.getElementById('interestBtn');
+      btn.textContent = data.interested ? '찜 취소' : '찜하기';
+
+      btn.addEventListener('click', () => {
+        if (!token) return alert("로그인이 필요합니다!");
+
+        if (data.interested) {
+          // TODO: 찜 취소 기능 (DELETE) 구현 필요
+          alert("찜 취소 기능은 아직 구현되지 않았어요.");
+        } else {
+          fetch(`http://127.0.0.1:8000/api/interests/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            },
+            body: JSON.stringify({ book: bookId })
+          })
+          .then(res => res.json())
+          .then(() => {
+            alert("찜했습니다!");
+            btn.textContent = "찜 취소";
+            data.interested = true;
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

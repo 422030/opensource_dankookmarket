@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 - 단근마켓</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <main style="text-align: center; margin-top: 100px;">
+    <h1>회원가입</h1>
+    <p>사용자 정보를 입력해 주세요.</p>
+    <input type="text" id="regUsername" placeholder="이름 또는 닉네임"><br><br>
+    <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)"><br><br>
+    <button onclick="register()">회원가입</button>
+    <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
+  </main>
+
+  <script>
+    async function register() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const isAdmin = document.getElementById('isAdminCheck').checked;
+
+      if (!username || !password) {
+        alert("모든 항목을 입력해 주세요.");
+        return;
+      }
+
+      const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=\-{}[\]|:;"'<>,.?/~`]).{8,}$/;
+      if (!pwRegex.test(password)) {
+        alert("비밀번호는 8자 이상, 영문+숫자+기호를 포함해야 합니다.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/users/register/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password, is_admin: isAdmin })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert(data.message);
+          window.location.href = "login.html";
+        } else {
+          alert(data.error || "회원가입 실패");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("서버 연결에 실패했습니다.");
+      }
+    }
+</script>
+
+</body>
+</html>

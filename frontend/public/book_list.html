@@ -1,0 +1,112 @@
+#교재 목록 보여주는 페이지
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교재 목록 - 단근마켓</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    main {
+      padding: 30px;
+      max-width: 1000px;
+      margin: auto;
+      font-family: 'Courier New', monospace;
+    }
+
+    h1 {
+      color: #3661e1;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .book-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .book-card {
+      background-color: white;
+      border: 2px solid #3661e1;
+      border-radius: 8px;
+      padding: 20px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .book-card:hover {
+      background-color: #f0f5ff;
+    }
+
+    .book-title {
+      font-size: 20px;
+      color: #3661e1;
+      margin: 0 0 5px;
+    }
+
+    .book-meta {
+      font-size: 14px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="logo.png" alt="로고" style="height: 50px;" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="book_list.html">교재 목록</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>전체 교재 목록</h1>
+    <div class="book-list" id="bookList">
+      <p>불러오는 중...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const bookListEl = document.getElementById("bookList");
+
+    fetch("http://127.0.0.1:8000/api/books/")
+      .then(response => response.json())
+      .then(books => {
+        if (books.length === 0) {
+          bookListEl.innerHTML = "<p>등록된 교재가 없습니다.</p>";
+          return;
+        }
+
+        bookListEl.innerHTML = books.map(book => `
+          <div class="book-card" onclick="location.href='book_detail.html?id=${book.id}'">
+            <h2 class="book-title">${book.title}</h2>
+            <p class="book-meta">
+              저자: ${book.author} | 가격: ${book.price}원 | 상태: ${book.condition} | 등록자: ${book.seller_username}
+            </p>
+          </div>
+        `).join("");
+      })
+      .catch(err => {
+        console.error(err);
+        bookListEl.innerHTML = "<p>교재 목록을 불러오는 데 실패했습니다.</p>";
+      });
+  </script>
+</body>
+</html>
