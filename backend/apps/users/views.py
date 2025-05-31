@@ -1,5 +1,3 @@
-# users/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -8,18 +6,21 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-# DRF 추가
 from rest_framework import viewsets
 from .serializers import UserSerializer
 
-#API 테스트용 백엔드 엔드 포인트
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
 @csrf_exempt
+def ping(request):
+    return JsonResponse({'message': 'pong'}, status=200)
+
+@csrf_exempt
 def test_api(request):
     return JsonResponse({'message': 'API 연결 성공!'}, status=200)
+
 @csrf_exempt
 def register_api(request):
     if request.method == 'POST':
@@ -37,15 +38,14 @@ def register_api(request):
 
             user = User.objects.create_user(username=username, password=password)
             if is_admin:
-                user.is_staff = True  # 관리자 권한 부여
+                user.is_staff = True
             user.save()
             return JsonResponse({'message': '회원가입이 완료되었습니다!'}, status=201)
-
 
         except json.JSONDecodeError:
             return JsonResponse({'error': '잘못된 JSON 형식입니다.'}, status=400)
 
-    return JsonResponse({'message': '회원가입 API입니다.'})  
+    return JsonResponse({'message': '회원가입 API입니다.'})
 
 @csrf_exempt
 def login_api(request):
@@ -57,6 +57,7 @@ def login_api(request):
 
             user = authenticate(username=username, password=password)
             if user is not None:
+                login(request, user)  # ✅ 세션 연결 필수
                 return JsonResponse({'message': '로그인 성공!', 'is_admin': user.is_staff}, status=200)
             else:
                 return JsonResponse({'error': '아이디 또는 비밀번호가 올바르지 않습니다.'}, status=401)
@@ -64,7 +65,8 @@ def login_api(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': '잘못된 JSON 형식입니다.'}, status=400)
 
-    return JsonResponse({'message': '로그인 API입니다.'})
+    return JsonResponse({'message': '로그인 API입니다.'}, json_dumps_params={'ensure_ascii': False})
+
 
 @csrf_exempt
 def current_user(request):
@@ -86,7 +88,6 @@ def check_login_api(request):
         })
     return JsonResponse({'is_authenticated': False})
 
-
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -104,8 +105,6 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-
-# 새로운 API ViewSet (Django REST Framework)
-class UserViewSet(viewsets.ReadOnlyModelViewSet):  # GET만 허용
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

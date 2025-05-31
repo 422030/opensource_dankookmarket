@@ -11,8 +11,15 @@
   <main style="text-align: center; margin-top: 100px;">
     <h1>회원가입</h1>
     <p>사용자 정보를 입력해 주세요.</p>
+
     <input type="text" id="regUsername" placeholder="이름 또는 닉네임"><br><br>
     <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)"><br><br>
+
+    <!-- ✅ 관리자 권한 체크박스 추가 -->
+    <label>
+      <input type="checkbox" id="isAdminCheck"> 관리자 권한 요청
+    </label><br><br>
+
     <button onclick="register()">회원가입</button>
     <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
   </main>
@@ -55,7 +62,7 @@
         alert("서버 연결에 실패했습니다.");
       }
     }
-</script>
+  </script>
 
 </body>
 </html>

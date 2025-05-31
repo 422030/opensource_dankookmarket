@@ -9,7 +9,6 @@
     * {
       box-sizing: border-box;
     }
-
     html, body {
       margin: 0;
       padding: 0;
@@ -17,12 +16,10 @@
       background-color: #f9f8f4;
       font-family: 'Courier New', monospace;
     }
-
     body {
       display: flex;
       flex-direction: column;
     }
-
     nav {
       display: flex;
       justify-content: space-between;
@@ -31,7 +28,6 @@
       background-color: #3661e1;
       color: white;
     }
-
     nav ul {
       list-style: none;
       display: flex;
@@ -39,19 +35,16 @@
       margin: 0;
       padding: 0;
     }
-
     nav a {
       color: white;
       text-decoration: none;
       font-size: 16px;
     }
-
     .chat-button {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .chat-icon {
       width: 30px;
       height: 24px;
@@ -60,7 +53,6 @@
       position: relative;
       box-shadow: 0 0 0 2px #3661e1;
     }
-
     .chat-icon::after {
       content: "";
       position: absolute;
@@ -75,13 +67,11 @@
       transform: rotate(45deg);
       box-shadow: -2px 2px 0 #3661e1;
     }
-
     .chat-label {
       font-size: 12px;
       color: white;
-      margin-top: 6px; /* 글자가 겹치지 않도록 간격 확보 */
+      margin-top: 6px;
     }
-
     main {
       flex: 1;
       display: flex;
@@ -91,19 +81,16 @@
       text-align: center;
       padding: 20px;
     }
-
     .main-logo {
       max-width: 150px;
       height: auto;
       margin-bottom: 15px;
     }
-
     h1 {
       font-size: 32px;
       color: #3661e1;
       margin-bottom: 30px;
     }
-
     .header-buttons {
       display: flex;
       flex-direction: column;
@@ -111,7 +98,6 @@
       margin-bottom: 30px;
       width: 200px;
     }
-
     .header-buttons button {
       padding: 16px;
       font-size: 16px;
@@ -123,22 +109,18 @@
       border-radius: 6px;
       transition: 0.2s;
     }
-
     .header-buttons button:hover {
       background-color: #3661e1;
       color: white;
     }
-
     #loginArea {
       margin-bottom: 40px;
     }
-
     #myBooksSection {
       width: 100%;
       max-width: 600px;
       text-align: left;
     }
-
     footer {
       background-color: #3661e1;
       color: white;
@@ -192,12 +174,11 @@
     <p>&copy; 2025 단근마켓</p>
   </footer>
 
-  <script src="src/js/script.js"></script>
   <script>
     const loginArea = document.getElementById("loginArea");
     const myBooksSection = document.getElementById("myBooksSection");
     const myBooksEl = document.getElementById("myBooks");
-  
+
     fetch('http://127.0.0.1:8000/users/me/', {
       method: "GET",
       credentials: 'include',
@@ -207,10 +188,10 @@
       if (data.username) {
         loginArea.innerHTML = `<p><strong>${data.username}님 환영합니다!</strong></p><button onclick="logout()">로그아웃</button>`;
         myBooksSection.style.display = "block";
-  
+
         const books = JSON.parse(localStorage.getItem("books") || "[]");
         const myBooks = books.filter(book => book.writer === data.username);
-  
+
         if (myBooks.length === 0) {
           myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
         } else {
@@ -222,20 +203,19 @@
           `).join('');
         }
       } else {
-        loginArea.innerHTML = `<p>로그인이 필요합니다.</p><a href="login.html">로그인 하러 가기</a>`;
+        loginArea.innerHTML = `<button onclick="location.href='login.html'">로그인</button>`;
       }
     })
     .catch(err => {
-      console.error("사용자 정보 요청 실패", err);
-      loginArea.innerHTML = `<p>서버 연결 오류</p>`;
+      console.error("서버 연결 실패 또는 로그인 상태 아님", err);
+      loginArea.innerHTML = `<button onclick="location.href='login.html'">로그인</button>`;
     });
-  
+
     function logout() {
       localStorage.removeItem("username");
       localStorage.removeItem("isAdmin");
       window.location.href = "login.html";
     }
   </script>
-  
 </body>
 </html>
