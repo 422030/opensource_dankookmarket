@@ -6,7 +6,18 @@
   <title>교재 등록</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* 네비게이션 스타일 */
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
     nav {
       display: flex;
       justify-content: space-between;
@@ -15,68 +26,97 @@
       background-color: #3661e1;
       color: white;
     }
+
     nav ul {
       list-style: none;
       display: flex;
       gap: 15px;
-      margin-left: 20px;
+      margin: 0;
+      padding: 0;
     }
+
     nav a {
       color: white;
       text-decoration: none;
+      font-size: 16px;
     }
-    #userInfo {
-      margin-left: auto;
+
+    .chat-button {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
     }
-    #userInfo button {
-      padding: 4px 8px;
-      cursor: pointer;
+
+    .chat-icon {
+      width: 30px;
+      height: 24px;
+      background-color: white;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 0 0 2px #3661e1;
+    }
+
+    .chat-icon::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border: 6px solid transparent;
+      border-top-color: white;
+      border-bottom: 0;
+      margin-left: -3px;
+      transform: rotate(45deg);
+      box-shadow: -2px 2px 0 #3661e1;
+    }
+
+    .chat-label {
+      font-size: 12px;
+      color: white;
+      margin-top: 6px;
     }
   </style>
 </head>
 <body>
   <header>
     <nav>
-      <div style="display: flex; align-items: center;">
-        <a href="index.html">
-          <img src="logo.png" alt="단근마켓 로고" style="height: 50px;" />
-        </a>
-        <ul>
-          <li><a href="index.html">홈</a></li>
-          <li><a href="search_book.html">교재 검색</a></li>
-          <li><a href="add_book.html">교재 등록</a></li>
-          <li><a href="group_buy.html">공동구매</a></li>
-        </ul>
-      </div>
-      <div id="userInfo"></div>
+      <a href="index.html">
+        <img src="logo.png" alt="로고" style="height: 50px;" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
     </nav>
   </header>
 
-  <main>
+ <main style="text-align: center; padding: 30px;">
     <h2>교재 등록 페이지</h2>
     <form onsubmit="registerBook(event)">
       <input type="text" id="bookTitle" placeholder="교재 제목" required />
       <input type="number" id="bookPrice" placeholder="가격" required min="1" />
-
       <select id="bookCategory" required>
         <option value="">카테고리 선택</option>
         <option value="전공">전공</option>
         <option value="교양">교양</option>
       </select>
-
       <textarea id="bookComment" placeholder="코멘트 (100자 이내)" maxlength="100"></textarea>
-
       <button type="submit">등록</button>
     </form>
   </main>
 
-  <footer>
-    <p>&copy; 2025 단근마켓</p>
+  <footer style=  "text-align: center;" >
+ <p>&copy; 2025 단근마켓</p>
   </footer>
-
   <script>
     // 로그인 체크
     const username = localStorage.getItem("username");
