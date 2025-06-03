@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 - 단근마켓</title>
+  <link rel="stylesheet" href="../src/css/styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .register-container {
+      height: calc(100vh - 80px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .register-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      width: 320px;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .register-box h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .register-box input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .register-box button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #3661e1;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .register-box p {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .register-box a {
+      color: #3661e1;
+      text-decoration: none;
+    }
+
+    .register-box a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="logo.png" alt="로고" style="height: 50px;" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="register-container">
+    <div class="register-box">
+      <h1>회원가입</h1>
+      <p>사용자 정보를 입력해 주세요.</p>
+      <input type="text" id="regUsername" placeholder="이름 또는 닉네임">
+      <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)">
+      <button onclick="register()">회원가입</button>
+      <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
+    </div>
+  </div>
+
+  <script>
+    async function register() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+
+      if (!username || !password) {
+        alert("모든 항목을 입력해 주세요.");
+        return;
+      }
+
+      const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=\-{}[\]|:;"'<>,.?/~`]).{8,}$/;
+      if (!pwRegex.test(password)) {
+        alert("비밀번호는 8자 이상, 영문+숫자+기호를 포함해야 합니다.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/users/register/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert(data.message);
+          window.location.href = "login.html";
+        } else {
+          alert(data.error || "회원가입 실패");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("서버 연결에 실패했습니다.");
+      }
+    }
+  </script>
+
+</body>
+</html>

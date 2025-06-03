@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교재 상세보기 - 단근마켓</title>
+  <link rel="stylesheet" href="../src/css/styles.css" />
+  <style>
+    body {
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .book-card {
+      background-color: white;
+      border: 2px solid #3661e1;
+      border-radius: 8px;
+      padding: 20px 40px;
+      color: #333;
+    }
+
+    .book-card h2 {
+      text-align: center;
+      color: #3661e1;
+      margin-bottom: 20px;
+    }
+
+    .book-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .info-label {
+      font-weight: bold;
+      width: 100px;
+      text-align: right;
+    }
+
+    .info-value {
+      flex: 1;
+      text-align: left;
+    }
+
+    #interestBtn {
+      margin: 30px auto 0;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid #3661e1;
+      background-color: white;
+      color: #3661e1;
+      border-radius: 6px;
+      display: block;
+      width: 200px;
+    }
+
+    #interestBtn:hover {
+      background-color: #3661e1;
+      color: white;
+    }
+
+    footer {
+      background-color: #3661e1;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;" /></a>
+      <ul style="display:flex; list-style:none; gap:15px; margin:0; padding:0;">
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li><a href="chat_box.html">채팅창</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <main>
+    <div class="book-card">
+      <h2 id="bookTitle">교재 제목</h2>
+      <div class="book-info">
+        <div class="info-row"><div class="info-label">저자:</div><div class="info-value" id="bookAuthor">-</div></div>
+        <div class="info-row"><div class="info-label">가격:</div><div class="info-value"><span id="bookPrice">-</span> 원</div></div>
+        <div class="info-row"><div class="info-label">상태:</div><div class="info-value" id="bookCondition">-</div></div>
+        <div class="info-row"><div class="info-label">카테고리:</div><div class="info-value" id="bookCategory">-</div></div>
+        <div class="info-row"><div class="info-label">설명:</div><div class="info-value" id="bookDescription">-</div></div>
+      </div>
+      <button id="interestBtn">찜하기</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('id');
+    window.location.href = `book_detail.html?id=${book.id}`;
+
+
+
+    // 책 정보 불러오기
+    fetch(`http://127.0.0.1:8000/api/books/${bookId}/`)
+      .then(res => res.json())
+      .then(book => {
+        document.getElementById("bookTitle").textContent = book.title;
+        document.getElementById("bookAuthor").textContent = book.author;
+        document.getElementById("bookPrice").textContent = book.price;
+        document.getElementById("bookCondition").textContent = book.condition;
+        document.getElementById("bookCategory").textContent = book.category;
+        document.getElementById("bookDescription").textContent = book.description;
+      });
+
+    // 찜 버튼 기본 동작 (임시 기능)
+    const btn = document.getElementById('interestBtn');
+    btn.addEventListener('click', () => {
+      alert("찜 기능은 아직 로그인 없이 구현되지 않았어요 :)");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>교재 검색</title>
+  <link rel="stylesheet" href="../src/css/styles.css" />
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #f9f8f4;
+    font-family: 'Courier New', monospace;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #3661e1;
+    color: white;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+  }
+
+
+  img {
+    max-width: 100px;
+    margin-top: 5px;
+    display: block;
+  }
+  main input,
+  main select,
+  main button {
+    font-size: 16px;
+    padding: 10px 14px;
+    margin: 6px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background-color: #3661e1;
+    color: white;
+    border-color: #3661e1;
+  }
+
+</style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html"><img src="logo.png" alt="로고" /></a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+         <a href="chat_box.html" title="채팅함" class="chat-button">
+           <div class="chat-icon"></div>
+           <span class="chat-label">채팅창</span>
+         </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+ <main style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 30px; font-size: 18px;">
+    <h2>교재 검색</h2>
+    <input id="searchInput" placeholder="교재명을 입력하세요" />
+    <select id="categoryFilter">
+      <option value="all">전체</option>
+      <option value="전공">전공</option>
+      <option value="교양">교양</option>
+    </select>
+    <button onclick="searchBooks()">검색</button>
+
+    <div id="resultArea"></div>
+  </main>
+
+  <footer style="text-align: center;">
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+ 
+ <script>
+    const username = localStorage.getItem("username");
+    if (!username) {
+      alert("로그인 먼저 해주세요.");
+      window.location.href = "index.html";
+    }
+
+
+    let books = [];
+
+    async function fetchBooksFromAPI() {
+      try{
+        const response = await fetch("http://127.0.0.1:8000/api/books/");
+        if (!response.ok) {
+          throw new Error("책 정보를 불러오는 데 실패했습니다.");
+        }
+        books = await response.json();
+        searchBooks();
+      } catch (error) {
+        console.error("API 에러:", error);
+      }
+    }
+
+    function searchBooks() {
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+      const category = document.getElementById("categoryFilter").value;
+      const resultArea = document.getElementById("resultArea");
+
+      const results = books.filter(book =>
+        (book.title.toLowerCase().includes(keyword) || book.description?.toLowerCase().includes(keyword)) &&
+        (category === "all" || book.category === category)
+  );
+
+  if (results.length === 0) {
+    resultArea.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    return;
+  }
+
+  resultArea.innerHTML = results.map((book, i) => `
+  <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+    ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
+    💬 ${book.description || "설명 없음"}<br/>
+    👤 등록자: ${book.seller_username}
+
+    ${book.seller_username !== username ? `
+      <div style="text-align: center; margin-top: 10px;">
+        <button style="display: inline-block;" onclick="startChat('${book.seller_username}')">💬 채팅하기</button>
+      </div>
+    ` : ""}
+
+    <div style="text-align: center; margin-top: 6px;">
+      <button style="display: inline-block;" onclick="location.href='book_detail.html?id=${book.id}'">📖 상세보기</button>
+    </div>
+  </div>
+`).join("");
+
+}
+
+
+    function startChat(target) {
+      const message = prompt(`${target}님에게 보낼 메시지를 입력하세요:`);
+      if (message) {
+        const key = `chat_${username}_to_${target}`;
+        const history = JSON.parse(localStorage.getItem(key) || "[]");
+        history.push({ from: username, to: target, message, time: new Date().toLocaleString() });
+        localStorage.setItem(key, JSON.stringify(history));
+        alert("메시지를 보냈습니다!");
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", fetchBooksFromAPI);
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>채팅함</title>
+  <link rel="stylesheet" href="../src/css/styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between; /* 로고 왼쪽, 메뉴 오른쪽 */
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    .logo {
+      height: 50px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <!-- ✅ 단국대학교 로고 (헤더 왼쪽 상단) -->
+    <a href="index.html">
+      <img src="logo.png" alt="단국대학교 로고" class="logo" />
+    </a>
+
+    <!-- ✅ 오른쪽 메뉴 -->
+    <ul>
+      <li><a href="index.html">홈</a></li>
+      <li><a href="search_book.html">교재 검색</a></li>
+      <li><a href="add_book.html">교재 등록</a></li>
+      <li><a href="group_buy.html">공동구매</a></li>
+      <li>
+        <a href="chat_box.html" title="채팅함" class="chat-button">
+          <div class="chat-icon"></div>
+          <div class="chat-label">채팅창</div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>📚 내가 등록한 교재</h2>
+  <div id="myBooks" class="section">
+    <p style="color: #888;">등록한 교재가 없습니다.</p>
+  </div>
+
+  <hr/>
+
+  <h2>💬 채팅함</h2>
+  <div id="chatList" class="section">
+    <p style="color: #888;">채팅 내역이 없습니다.</p>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 단근마켓</p>
+</footer>
+
+<script>
+  const myBooksEl = document.getElementById("myBooks");
+  const chatListEl = document.getElementById("chatList");
+  // 이후 fetch 연결 필요
+</script>
+
+</body>
+</html>

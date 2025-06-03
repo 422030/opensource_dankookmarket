@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교재 등록</title>
+  <link rel="stylesheet" href="../src/css/styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    form input,
+    form select,
+    form textarea,
+    form button {
+      width: 300px;
+      max-width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #999;
+      border-radius: 4px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="logo.png" alt="로고" style="height: 50px;" />
+      </a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="userInfo"></div>
+
+ <main style="text-align: center; padding: 30px;">
+    <h2>교재 등록 페이지</h2>
+    <form onsubmit="registerBook(event)">
+      <input type="text" id="bookTitle" placeholder="교재 제목" required />
+      <input type="number" id="bookPrice" placeholder="가격" required min="1" />
+      <select id="bookCategory" required>
+        <option value="">카테고리 선택</option>
+        <option value="전공">전공</option>
+        <option value="교양">교양</option>
+      </select>
+      <textarea id="bookComment" placeholder="코멘트 (100자 이내)" maxlength="100"></textarea>
+      <button type="submit">등록</button>
+    </form>
+  </main>
+
+  <footer style=  "text-align: center;" >
+ <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    // 로그인 체크
+   document.addEventListener("DOMContentLoaded", function () {
+    const username = localStorage.getItem("username");
+    const userInfoDiv = document.getElementById("userInfo");
+
+    if (!username) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "index.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("username");
+      localStorage.removeItem("accessToken");
+      window.location.href = "index.html";
+    }
+   });
+
+    async function registerBook() {
+
+      const title = document.getElementById("bookTitle").value.trim();
+      const price = parseInt(document.getElementById("bookPrice").value);
+      const category = document.getElementById("bookCategory").value;
+      const comment = document.getElementById("bookComment").value.trim();
+
+      if (title.length < 2) {
+        alert("교재 제목은 2글자 이상 입력해 주세요.");
+        return;
+      }
+      if (isNaN(price) || price <= 0) {
+        alert("가격은 0보다 큰 숫자로 입력해 주세요.");
+        return;
+      }
+
+      try {
+      const res = await fetch("http://127.0.0.1:8000/api/books/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          price,
+          category,
+          description: comment, 
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        const message = errorData?.detail || "등록 실패";
+        throw new Error(message);
+      }
+
+      alert("교재 등록이 완료되었습니다!");
+      window.location.href = "index.html";
+    } catch (err) {
+      alert("등록 중 오류 발생: " + err.message);
+      console.error(err);
+    }
+  }
+</script>
+
+      
+</body>
+</html>

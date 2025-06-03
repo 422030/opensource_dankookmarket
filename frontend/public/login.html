@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단근마켓 로그인</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #f9f8f4;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .login-container h1 {
+      margin-bottom: 20px;
+      color: #111;
+    }
+
+    .login-container p {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3661e1;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-container button:hover {
+      background-color: #2748b1;
+    }
+
+    .login-container a {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #3661e1;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">
+      <img src="logo.png" alt="로고" style="height: 50px;" />
+    </a>
+    <ul>
+      <li><a href="index.html">홈</a></li>
+      <li><a href="search_book.html">교재 검색</a></li>
+      <li><a href="add_book.html">교재 등록</a></li>
+      <li><a href="group_buy.html">공동구매</a></li>
+      <li>
+        <a href="chat_box.html" title="채팅함" class="chat-button">
+          <div class="chat-icon"></div>
+          <span class="chat-label">채팅창</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="login-container">
+    <h1>단근마켓 로그인</h1>
+    <p>사용자 이름과 비밀번호를 입력해 주세요.</p>
+
+    <input type="text" placeholder="이름 또는 닉네임" id="username" />
+    <input type="password" placeholder="비밀번호" id="password" />
+    <button onclick="login()">로그인</button>
+
+    <a href="register.html">회원가입 하러 가기</a>
+  </div>
+
+  
+  <script src="../src/js/login.js" defer></script>
+</body>
+</html>
