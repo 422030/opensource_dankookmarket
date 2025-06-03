@@ -115,15 +115,15 @@ python -m http.server 8001
 
   설명: 로그인된 사용자만 등록 가능. seller는 자동으로 서버에서 설정됨
 
-  ④ 책 검색
-  - URL: /api/books/?search=자료
-  - Method: GET
-    설명: 교재 제목, 카테고리, 설명(comment)에서 키워드 포함 항목 검색
+④ 책 검색  
+- URL: /api/books/?search=자료
+- Method: GET
+  설명: 교재 제목, 카테고리, 설명(comment)에서 키워드 포함 항목 검색
 
-  ⑤ 찜 확인
-  - URL: /api/interests/check/?book_id=1
-  - Method: GET
-    설명: 해당 책(book\_id)을 내가 찜했는지 확인 (로그인 필요)
+⑤ 찜 확인  
+- URL: /api/interests/check/?book_id=1
+- Method: GET
+  설명: 해당 책(book\_id)을 내가 찜했는지 확인 (로그인 필요)
 
 **5. 개발 시 체크리스트**  
 ① 책 등록/검색 API는 인증 토큰 없이도 접근 가능 (IsAuthenticatedOrReadOnly)  
