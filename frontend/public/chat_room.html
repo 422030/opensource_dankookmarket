@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>채팅방</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .chat-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chat-icon {
+      width: 30px;
+      height: 24px;
+      background-color: white;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 0 0 2px #3661e1;
+    }
+
+    .chat-icon::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border: 6px solid transparent;
+      border-top-color: white;
+      border-bottom: 0;
+      margin-left: -3px;
+      transform: rotate(45deg);
+      box-shadow: -2px 2px 0 #3661e1;
+    }
+
+    .chat-label {
+      font-size: 12px;
+      color: white;
+      margin-top: 6px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    #chatArea {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;" /></a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="roomTitle">채팅방</h2>
+
+    <div id="chatArea"></div>
+
+    <input type="text" id="messageInput" placeholder="메시지를 입력하세요" />
+    <button onclick="sendMessage()">전송</button>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const me = localStorage.getItem("username");
+    const target = new URLSearchParams(window.location.search).get("with");
+
+    if (!me || !target) {
+      alert("잘못된 접근입니다.");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("roomTitle").innerText = `${target}님과의 채팅`;
+
+    const key1 = `chat_${me}_${target}`;
+    const key2 = `chat_${target}_${me}`;
+    let messages = [];
+
+    function loadMessages() {
+      let newMessages = [];
+      if (localStorage.getItem(key1)) {
+        newMessages = newMessages.concat(JSON.parse(localStorage.getItem(key1)));
+      }
+      if (localStorage.getItem(key2)) {
+        newMessages = newMessages.concat(JSON.parse(localStorage.getItem(key2)));
+      }
+      newMessages.sort((a, b) => new Date(a.time) - new Date(b.time));
+      return newMessages;
+    }
+
+    const chatArea = document.getElementById("chatArea");
+
+    function renderChat() {
+      chatArea.innerHTML = messages.map(msg => `
+        <div style="text-align: ${msg.from === me ? 'right' : 'left'};">
+          <span><strong>${msg.from}</strong>: ${msg.message}</span><br/>
+          <small>${msg.time}</small>
+        </div>
+      `).join("");
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const newMsg = {
+        from: me,
+        to: target,
+        message: text,
+        time: new Date().toLocaleString()
+      };
+
+      const myMessages = JSON.parse(localStorage.getItem(key1) || "[]");
+      myMessages.push(newMsg);
+      localStorage.setItem(key1, JSON.stringify(myMessages));
+
+      messages.push(newMsg);
+      input.value = "";
+      renderChat();
+    }
+
+    function pollMessages() {
+      const latestMessages = loadMessages();
+      if (latestMessages.length > messages.length) {
+        const newMsg = latestMessages[latestMessages.length - 1];
+        if (newMsg.from !== me) {
+          alert(`${newMsg.from}님에게서 새 메시지가 도착했습니다!`);
+        }
+        messages = latestMessages;
+        renderChat();
+      }
+    }
+
+    messages = loadMessages();
+    renderChat();
+    setInterval(pollMessages, 2000);
+  </script>
+
+</body>
+</html>

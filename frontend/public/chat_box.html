@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>채팅함</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+      color: white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .chat-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chat-icon {
+      width: 30px;
+      height: 24px;
+      background-color: white;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 0 0 2px #3661e1;
+    }
+
+    .chat-icon::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border: 6px solid transparent;
+      border-top-color: white;
+      border-bottom: 0;
+      margin-left: -3px;
+      transform: rotate(45deg);
+      box-shadow: -2px 2px 0 #3661e1;
+    }
+
+    .chat-label {
+      font-size: 12px;
+      color: white;
+      margin-top: 6px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;" /></a>
+      <ul>
+        <li><a href="index.html">홈</a></li>
+        <li><a href="search_book.html">교재 검색</a></li>
+        <li><a href="add_book.html">교재 등록</a></li>
+        <li><a href="group_buy.html">공동구매</a></li>
+        <li>
+          <a href="chat_box.html" title="채팅함" class="chat-button">
+            <div class="chat-icon"></div>
+            <span class="chat-label">채팅창</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>내가 등록한 교재</h2>
+    <div id="myBooks" class="section"></div>
+
+    <hr/>
+
+    <h2>채팅함</h2>
+    <div id="chatList" class="section"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 단근마켓</p>
+  </footer>
+
+  <script>
+    const username = localStorage.getItem("username");
+    const myBooksEl = document.getElementById("myBooks");
+    const chatListEl = document.getElementById("chatList");
+
+    const books = JSON.parse(localStorage.getItem("books") || "[]");
+    const myBooks = books.filter(book => book.writer === username);
+
+    if (myBooks.length === 0) {
+      myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
+    } else {
+      myBooksEl.innerHTML = myBooks.map((book, i) => `
+        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+          ${i + 1}. <strong>${book.title}</strong> - ${book.price}원 (${book.category})<br/>
+          ${book.comment}<br/>
+          <button onclick="deleteBook('${book.title}')">삭제</button>
+        </div>
+      `).join('');
+    }
+
+    function deleteBook(title) {
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+      const updated = books.filter(book => !(book.title === title && book.writer === username));
+      localStorage.setItem("books", JSON.stringify(updated));
+      location.reload();
+    }
+
+    const chatUsers = new Set();
+    for (let key in localStorage) {
+      if (key.startsWith("chat_")) {
+        const [, from, , to] = key.split("_");
+        if (from === username) chatUsers.add(to);
+        if (to === username) chatUsers.add(from);
+      }
+    }
+
+    if (chatUsers.size === 0) {
+      chatListEl.innerHTML = "<p>아직 채팅한 사용자가 없습니다.</p>";
+    } else {
+      chatListEl.innerHTML = Array.from(chatUsers).map(user => `
+        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+          <strong>${user}</strong><br/>
+          <a href="chat_room.html?with=${user}">채팅방으로 이동</a>
+        </div>
+      `).join("");
+    }
+  </script>
+
+</body>
+</html>
