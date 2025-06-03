@@ -1,9 +1,10 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>회원가입 - 단근마켓</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../src/css/styles.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -40,40 +41,61 @@
       font-size: 16px;
     }
 
-    .chat-button {
+    .register-container {
+      height: calc(100vh - 80px);
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
     }
 
-    .chat-icon {
-      width: 30px;
-      height: 24px;
-      background-color: white;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: 0 0 0 2px #3661e1;
+    .register-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      width: 320px;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
 
-    .chat-icon::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 8px;
-      width: 0;
-      height: 0;
-      border: 6px solid transparent;
-      border-top-color: white;
-      border-bottom: 0;
-      margin-left: -3px;
-      transform: rotate(45deg);
-      box-shadow: -2px 2px 0 #3661e1;
+    .register-box h1 {
+      margin: 0;
+      font-size: 24px;
     }
 
-    .chat-label {
-      font-size: 12px;
+    .register-box input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .register-box button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #3661e1;
       color: white;
-      margin-top: 6px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .register-box p {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .register-box a {
+      color: #3661e1;
+      text-decoration: none;
+    }
+
+    .register-box a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -99,23 +121,21 @@
     </nav>
   </header>
 
-  <main style="text-align: center; margin-top: 100px;">
-    <h1>회원가입</h1>
-    <p>사용자 정보를 입력해 주세요.</p>
-    <input type="text" id="regUsername" placeholder="이름 또는 닉네임"><br><br>
-    <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)"><br><br>
-    <label>
-      <input type="checkbox" id="isAdminCheck"> 관리자 계정으로 등록
-    </label><br><br>
-    <button onclick="register()">회원가입</button>
-    <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
-  </main>
+  <div class="register-container">
+    <div class="register-box">
+      <h1>회원가입</h1>
+      <p>사용자 정보를 입력해 주세요.</p>
+      <input type="text" id="regUsername" placeholder="이름 또는 닉네임">
+      <input type="password" id="regPassword" placeholder="비밀번호 (8자 이상, 문자+숫자+기호 포함)">
+      <button onclick="register()">회원가입</button>
+      <p><a href="login.html">이미 계정이 있으신가요? 로그인</a></p>
+    </div>
+  </div>
 
   <script>
     async function register() {
       const username = document.getElementById('regUsername').value.trim();
       const password = document.getElementById('regPassword').value;
-      const isAdmin = document.getElementById('isAdminCheck').checked;
 
       if (!username || !password) {
         alert("모든 항목을 입력해 주세요.");
@@ -134,7 +154,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ username, password, is_admin: isAdmin })
+          body: JSON.stringify({ username, password })
         });
 
         const data = await res.json();

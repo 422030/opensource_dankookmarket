@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/', include('apps.books.urls')),
     path('api/accounts/', include('apps.accounts.urls')),
     path('users/', include('apps.users.urls')),
+    path('api/groupbuy/', include('apps.groups.urls')),
 ]
 
 # ✅ 여기를 꼭 추가해줘야 static 파일(css/js) 적용됨

@@ -2,11 +2,13 @@ from rest_framework import serializers
 from .models import Book, Interest, Transaction
 
 class BookSerializer(serializers.ModelSerializer):
-    seller_username = serializers.ReadOnlyField(source='seller.username', read_only=True)
+    seller_username = serializers.ReadOnlyField(source='seller.username')
 
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['title', 'price', 'category', 'seller', 'seller_username', 'description']
+        read_only_fields = ['seller', 'seller_username'] 
+
 
 class InterestSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source='user.username')
@@ -22,3 +24,4 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = '__all__'
+

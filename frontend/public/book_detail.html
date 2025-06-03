@@ -1,12 +1,32 @@
-#교재 상세 정보 표시 페이지
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>교재 상세보기 - 단근마켓</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../src/css/styles.css" />
   <style>
+    body {
+      background-color: #f9f8f4;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #3661e1;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+
     main {
       padding: 30px;
       max-width: 800px;
@@ -17,23 +37,40 @@
       background-color: white;
       border: 2px solid #3661e1;
       border-radius: 8px;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
+      padding: 20px 40px;
       color: #333;
     }
 
     .book-card h2 {
+      text-align: center;
       color: #3661e1;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
-    .book-info p {
-      margin: 8px 0;
-      font-size: 16px;
+    .book-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .info-label {
+      font-weight: bold;
+      width: 100px;
+      text-align: right;
+    }
+
+    .info-value {
+      flex: 1;
+      text-align: left;
     }
 
     #interestBtn {
-      margin-top: 20px;
+      margin: 30px auto 0;
       padding: 12px 20px;
       font-size: 16px;
       font-weight: bold;
@@ -42,47 +79,50 @@
       background-color: white;
       color: #3661e1;
       border-radius: 6px;
-      transition: 0.2s;
+      display: block;
+      width: 200px;
     }
 
     #interestBtn:hover {
       background-color: #3661e1;
       color: white;
     }
+
+    footer {
+      background-color: #3661e1;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <header>
     <nav>
-      <a href="index.html">
-        <img src="logo.png" alt="로고" style="height: 50px;" />
-      </a>
-      <ul>
+      <a href="index.html"><img src="logo.png" alt="로고" style="height: 50px;" /></a>
+      <ul style="display:flex; list-style:none; gap:15px; margin:0; padding:0;">
         <li><a href="index.html">홈</a></li>
         <li><a href="search_book.html">교재 검색</a></li>
         <li><a href="add_book.html">교재 등록</a></li>
         <li><a href="group_buy.html">공동구매</a></li>
-        <li>
-          <a href="chat_box.html" title="채팅함" class="chat-button">
-            <div class="chat-icon"></div>
-            <span class="chat-label">채팅창</span>
-          </a>
-        </li>
+        <li><a href="chat_box.html">채팅창</a></li>
       </ul>
     </nav>
   </header>
+
 
   <main>
     <div class="book-card">
       <h2 id="bookTitle">교재 제목</h2>
       <div class="book-info">
-        <p><strong>저자:</strong> <span id="bookAuthor"></span></p>
-        <p><strong>가격:</strong> <span id="bookPrice"></span> 원</p>
-        <p><strong>상태:</strong> <span id="bookCondition"></span></p>
-        <p><strong>카테고리:</strong> <span id="bookCategory"></span></p>
-        <p><strong>설명:</strong><br><span id="bookDescription"></span></p>
+        <div class="info-row"><div class="info-label">저자:</div><div class="info-value" id="bookAuthor">-</div></div>
+        <div class="info-row"><div class="info-label">가격:</div><div class="info-value"><span id="bookPrice">-</span> 원</div></div>
+        <div class="info-row"><div class="info-label">상태:</div><div class="info-value" id="bookCondition">-</div></div>
+        <div class="info-row"><div class="info-label">카테고리:</div><div class="info-value" id="bookCategory">-</div></div>
+        <div class="info-row"><div class="info-label">설명:</div><div class="info-value" id="bookDescription">-</div></div>
       </div>
-      <button id="interestBtn">찜 여부 확인 중...</button>
+      <button id="interestBtn">찜하기</button>
     </div>
   </main>
 
@@ -93,7 +133,9 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const bookId = urlParams.get('id');
-    const token = localStorage.getItem('token');
+    window.location.href = `book_detail.html?id=${book.id}`;
+
+
 
     // 책 정보 불러오기
     fetch(`http://127.0.0.1:8000/api/books/${bookId}/`)
@@ -107,41 +149,10 @@
         document.getElementById("bookDescription").textContent = book.description;
       });
 
-    // 찜 여부 확인 및 버튼 업데이트
-    fetch(`http://127.0.0.1:8000/api/interests/check/?book_id=${bookId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${token}`
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      const btn = document.getElementById('interestBtn');
-      btn.textContent = data.interested ? '찜 취소' : '찜하기';
-
-      btn.addEventListener('click', () => {
-        if (!token) return alert("로그인이 필요합니다!");
-
-        if (data.interested) {
-          // TODO: 찜 취소 기능 (DELETE) 구현 필요
-          alert("찜 취소 기능은 아직 구현되지 않았어요.");
-        } else {
-          fetch(`http://127.0.0.1:8000/api/interests/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${token}`
-            },
-            body: JSON.stringify({ book: bookId })
-          })
-          .then(res => res.json())
-          .then(() => {
-            alert("찜했습니다!");
-            btn.textContent = "찜 취소";
-            data.interested = true;
-          });
-        }
-      });
+    // 찜 버튼 기본 동작 (임시 기능)
+    const btn = document.getElementById('interestBtn');
+    btn.addEventListener('click', () => {
+      alert("찜 기능은 아직 로그인 없이 구현되지 않았어요 :)");
     });
   </script>
 </body>

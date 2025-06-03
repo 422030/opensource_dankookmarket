@@ -1,15 +1,18 @@
-from rest_framework import viewsets, permissions, serializers
-from rest_framework.decorators import action
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import action, api_view
+from rest_framework.response import Response
 from .models import Book, Interest, Transaction
 from .serializers import BookSerializer, InterestSerializer, TransactionSerializer
+from django.contrib.auth.models import User
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all().order_by('-created_at')
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
-        serializer.save(seller=self.request.user)
+        serializer.save(seller=User.objects.first())
+        #serializer.save(seller=self.request.user)  # ✅ seller 저장
 
 class InterestViewSet(viewsets.ModelViewSet):
     queryset = Interest.objects.all()
@@ -21,7 +24,7 @@ class InterestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Interest.objects.filter(user=self.request.user)
-    
+
     @action(detail=False, methods=['get'], url_path='check')
     def check_interest(self, request):
         user = request.user
@@ -33,16 +36,7 @@ class InterestViewSet(viewsets.ModelViewSet):
         exists = Interest.objects.filter(user=user, book_id=book_id).exists()
         return Response({'interested': exists})
 
-
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-class BookSerializer(serializers.ModelSerializer):
-    seller_username = serializers.CharField(source='seller.username', read_only=True)
-
-    class Meta:
-        model = Book
-        fields = '__all__'
-

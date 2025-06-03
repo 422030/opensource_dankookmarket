@@ -24,23 +24,32 @@ const loginArea = document.getElementById("loginArea");
 const myBooksSection = document.getElementById("myBooksSection");
 const myBooksEl = document.getElementById("myBooks");
 
-if (username) {
+if (username && loginArea && myBooksSection && myBooksEl) {
   loginArea.innerHTML = `<p><strong>${username}님 환영합니다!</strong></p><button onclick="logout()">로그아웃</button>`;
   myBooksSection.style.display = "block";
 
-  const books = JSON.parse(localStorage.getItem("books") || "[]");
-  const myBooks = books.filter(book => book.writer === username);
+  fetch("http://127.0.0.1:8000/api/books/")
+    .then(res => res.json())
+    .then(books => {
+      localStorage.setItem("books", JSON.stringify(books));
 
-  if (myBooks.length === 0) {
-    myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
-  } else {
-    myBooksEl.innerHTML = myBooks.map((book, i) => `
-      <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-        ${i + 1}. <strong>${book.title}</strong> - ${book.price}원 (${book.category})<br/>
-        💬 ${book.comment}
-      </div>
-    `).join('');
-  }
+      const myBooks = books.filter(book => book.seller_username === username);
+
+      if (myBooks.length === 0) {
+        myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
+      } else {
+        myBooksEl.innerHTML = myBooks.map((book, i) => `
+          <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+            ${i + 1}. <strong>${book.title}</strong> - ${book.price}원 (${book.category})<br/>
+            💬 ${book.description || "설명 없음"}
+          </div>
+        `).join('');
+      }
+    })
+    .catch(err => {
+      console.error("❌ 교재 목록 불러오기 실패:", err);
+      myBooksEl.innerHTML = "<p>교재 정보를 불러오지 못했습니다.</p>";
+    });
 }
 
 function logout() {

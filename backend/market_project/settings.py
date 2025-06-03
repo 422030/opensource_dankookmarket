@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'apps.books.apps.BooksConfig',
     'apps.reviews.apps.ReviewsConfig',
     'apps.chats.apps.ChatsConfig',
-    'apps.groups.apps.GroupsConfig',
+    'apps.groups',
 ]
 
 MIDDLEWARE = [

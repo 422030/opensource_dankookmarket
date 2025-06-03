@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>단근마켓</title>
-  <link rel="stylesheet" href="src/css/styles.css" />
+  <link rel="stylesheet" href="../src/css/styles.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -40,38 +40,8 @@
       text-decoration: none;
       font-size: 16px;
     }
-    .chat-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .chat-icon {
-      width: 30px;
-      height: 24px;
-      background-color: white;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: 0 0 0 2px #3661e1;
-    }
-    .chat-icon::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 8px;
-      width: 0;
-      height: 0;
-      border: 6px solid transparent;
-      border-top-color: white;
-      border-bottom: 0;
-      margin-left: -3px;
-      transform: rotate(45deg);
-      box-shadow: -2px 2px 0 #3661e1;
-    }
-    .chat-label {
-      font-size: 12px;
-      color: white;
-      margin-top: 6px;
-    }
+    
+    
     main {
       flex: 1;
       display: flex;
@@ -175,47 +145,42 @@
   </footer>
 
   <script>
-    const loginArea = document.getElementById("loginArea");
-    const myBooksSection = document.getElementById("myBooksSection");
-    const myBooksEl = document.getElementById("myBooks");
+    window.onload = function () {
+  const loginArea = document.getElementById("loginArea");
+  const myBooksSection = document.getElementById("myBooksSection");
+  const myBooksEl = document.getElementById("myBooks");
 
-    fetch('http://127.0.0.1:8000/users/me/', {
-      method: "GET",
-      credentials: 'include',
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.username) {
-        loginArea.innerHTML = `<p><strong>${data.username}님 환영합니다!</strong></p><button onclick="logout()">로그아웃</button>`;
-        myBooksSection.style.display = "block";
+  const username = localStorage.getItem("username");
 
-        const books = JSON.parse(localStorage.getItem("books") || "[]");
-        const myBooks = books.filter(book => book.writer === data.username);
+  if (username) {
+    loginArea.innerHTML = `<p><strong>${username}님 환영합니다!</strong></p>
+                           <button onclick="logout()">로그아웃</button>`;
+    myBooksSection.style.display = "block";
 
-        if (myBooks.length === 0) {
-          myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
-        } else {
-          myBooksEl.innerHTML = myBooks.map((book, i) => `
-            <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-              ${i + 1}. <strong>${book.title}</strong> - ${book.price}원 (${book.category})<br/>
-              💬 ${book.comment}
-            </div>
-          `).join('');
-        }
-      } else {
-        loginArea.innerHTML = `<button onclick="location.href='login.html'">로그인</button>`;
-      }
-    })
-    .catch(err => {
-      console.error("서버 연결 실패 또는 로그인 상태 아님", err);
-      loginArea.innerHTML = `<button onclick="location.href='login.html'">로그인</button>`;
-    });
+    const books = JSON.parse(localStorage.getItem("books") || "[]");
+    const myBooks = books.filter(book => book.writer === username);
 
-    function logout() {
-      localStorage.removeItem("username");
-      localStorage.removeItem("isAdmin");
-      window.location.href = "login.html";
+    if (myBooks.length === 0) {
+      myBooksEl.innerHTML = "<p>등록한 교재가 없습니다.</p>";
+    } else {
+      myBooksEl.innerHTML = myBooks.map((book, i) => `
+        <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+          ${i + 1}. <strong>${book.title}</strong> - ${book.price}원 (${book.category})<br/>
+          💬 ${book.comment}
+        </div>
+      `).join('');
     }
+  } else {
+    loginArea.innerHTML = `<button onclick="location.href='login.html'">로그인</button>`;
+  }
+};
+
+function logout() {
+  localStorage.removeItem("username");
+  localStorage.removeItem("isAdmin");
+  alert("로그아웃 되었습니다.");
+  window.location.reload();
+}
   </script>
 </body>
 </html>

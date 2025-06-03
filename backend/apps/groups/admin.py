@@ -1,3 +1,6 @@
-from django.contrib import admin
+# apps/groups/admin.py
 
-# Register your models here.
+from django.contrib import admin
+from .models import GroupBuyRequest
+
+admin.site.register(GroupBuyRequest)

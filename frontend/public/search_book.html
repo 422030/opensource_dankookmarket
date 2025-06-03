@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>교재 검색</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../src/css/styles.css" />
 <style>
   * {
     box-sizing: border-box;
@@ -40,40 +40,6 @@
     font-size: 16px;
   }
 
-  .chat-icon {
-    width: 30px;
-    height: 24px;
-    background-color: white;
-    border-radius: 8px;
-    position: relative;
-    box-shadow: 0 0 0 2px #3661e1;
-  }
-
-  .chat-icon::after {
-    content: "";
-    position: absolute;
-    bottom: -6px;
-    left: 8px;
-    width: 0;
-    height: 0;
-    border: 6px solid transparent;
-    border-top-color: white;
-    border-bottom: 0;
-    margin-left: -3px;
-    transform: rotate(45deg);
-    box-shadow: -2px 2px 0 #3661e1;
-  }
-
-.chat-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.chat-label {
-  font-size: 12px;
-  color: white;
-  margin-top: 6px;
-}
 
   img {
     max-width: 100px;
@@ -90,6 +56,21 @@
 
   h2 {
     font-size: 24px;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background-color: #3661e1;
+    color: white;
+    border-color: #3661e1;
   }
 
 </style>
@@ -169,14 +150,23 @@
   }
 
   resultArea.innerHTML = results.map((book, i) => `
-    <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-      ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
-      💬 ${book.comment}<br/>
-      ${book.imageUrl ? `<img src="${book.imageUrl}" />` : ""}
-      <br/>👤 등록자: ${book.writer}
-      ${book.writer !== username ? `<br/><button onclick="startChat('${book.writer}')">💬 채팅하기</button>` : ""}
+  <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+    ${i + 1}. <strong>${book.title}</strong> (${book.category}) - ${book.price}원<br/>
+    💬 ${book.description || "설명 없음"}<br/>
+    👤 등록자: ${book.seller_username}
+
+    ${book.seller_username !== username ? `
+      <div style="text-align: center; margin-top: 10px;">
+        <button style="display: inline-block;" onclick="startChat('${book.seller_username}')">💬 채팅하기</button>
+      </div>
+    ` : ""}
+
+    <div style="text-align: center; margin-top: 6px;">
+      <button style="display: inline-block;" onclick="location.href='book_detail.html?id=${book.id}'">📖 상세보기</button>
     </div>
-  `).join("");
+  </div>
+`).join("");
+
 }
 
 
