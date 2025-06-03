@@ -66,7 +66,7 @@ opensource_dankookmarket/
 
 ① 가상환경 만들기 및 실행 
  
-# 루트 디렉토리에서
+루트 디렉토리에서
 python -m venv venv
 .\venv\Scripts\activate  # Windows
 source venv/bin/activate # macOS/Linux
